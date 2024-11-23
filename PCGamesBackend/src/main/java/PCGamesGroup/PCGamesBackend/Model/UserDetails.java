@@ -5,16 +5,25 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document
+@Document(collection = "userDetails")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDetails {
     @Id
-    private Integer userId;
-    private String name;
-    private String email;
-    private Integer noOfGame;
+    @Field("_id")
+    private String userId;
+
+    @NonNull
+    @Indexed(unique = true)
+    private String userName;
+
+    @NonNull
+    private String userEmail;
 }
