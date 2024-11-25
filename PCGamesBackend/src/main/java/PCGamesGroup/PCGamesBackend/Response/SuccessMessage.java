@@ -1,4 +1,5 @@
-package PCGamesGroup.PCGamesBackend.ErrorResponse;
+package PCGamesGroup.PCGamesBackend.Response;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErrorMessage {
+public class SuccessMessage {
     private String status;
-    private String errorMessage;
+    private String message;
 }
