@@ -30,6 +30,8 @@ public class GameDetailsService {
     private GameDetailsRepo gameDetailsRepo;
     @Autowired
     private UserDetailRepo userDetailRepo;
+    @Autowired
+    private GameFileService gameFileService;
 
     public Object addGameDetails(GameDetails details, String userName, MultipartFile file1, MultipartFile file2, MultipartFile file3) throws IOException {
         // Validate mandatory fields
@@ -61,8 +63,19 @@ public class GameDetailsService {
 
         return gameDetailsRepo.findByGameName(details.getGameName());
     }
+    public String addGameFile(String gameName, MultipartFile gameFile) throws IOException, IllegalStateException{
+        System.out.println("This is in Detail service addGame....");
+        return "Game File uploaded successfully with ID : " + gameFileService.addGameFile(gameName,gameFile);
+    }
 
 
+
+    public Object getGameFile(String gameName) throws IOException {
+        return gameFileService.getGameFile(gameName);
+    }
+    public Object getAllGames() throws IOException{
+        return gameDetailsRepo.findAll();
+    }
     public Object getGameImageByName(String gameName) throws IOException {
         // Validate that the game exists
         GameDetails gameDetails = gameDetailsRepo.findByGameName(gameName);
@@ -114,8 +127,6 @@ public class GameDetailsService {
         headers.setContentType(MediaType.IMAGE_JPEG);
         return new ResponseEntity<>(gameDetails.getGameSecondScreenshot().getData(), headers, HttpStatus.OK);
     }
-
-
     public Object getGameDetailsByName(String gameName) {
         // Validate that the game exists
         GameDetails gameDetails = gameDetailsRepo.findByGameName(gameName);
@@ -125,6 +136,7 @@ public class GameDetailsService {
 
         return gameDetails;
     }
+
 
     public Object updateGameDetailsByName(GameDetails details, String gameName, MultipartFile file1, MultipartFile file2, MultipartFile file3) throws IOException {
         // Validate that the game exists
@@ -154,7 +166,6 @@ public class GameDetailsService {
         return updatedGame;
     }
 
-
     public Object deleteGameDetailsByName(String gameName) {
         // Validate that the game exists
         GameDetails existingGame = gameDetailsRepo.findByGameName(gameName);
@@ -166,5 +177,7 @@ public class GameDetailsService {
         gameDetailsRepo.deleteByGameName(gameName);
         return new SuccessMessage("Success", "Game '" + gameName + "' deleted successfully.");
     }
-
+    public Object deleteGameFile(String gameName) throws IOException{
+        return gameFileService.deleteGameFile(gameName);
+    }
 }

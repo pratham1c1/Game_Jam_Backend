@@ -3,8 +3,6 @@ package PCGamesGroup.PCGamesBackend.Controller;
 import PCGamesGroup.PCGamesBackend.Model.GameDetails;
 import PCGamesGroup.PCGamesBackend.Services.GameDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,7 +10,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/games")
-public class GameController {
+public class GameDetailsController {
     @Autowired
     private GameDetailsService gameDetailsService;
 
@@ -20,7 +18,20 @@ public class GameController {
     public Object addGameDetails(@RequestPart("details") GameDetails details, @RequestPart("userName") String userName , @RequestPart("gameImage") MultipartFile gameImage, @RequestPart("gameFirstSs") MultipartFile gameFirstSs, @RequestPart("gameSecondSs") MultipartFile gameSecondSs) throws IOException {
         return gameDetailsService.addGameDetails(details,userName,gameImage,gameFirstSs,gameSecondSs);
     }
+    @PostMapping("/addGameFile")
+    public Object addGameFile(@RequestPart("gameName") String gameName , @RequestPart("gameFile") MultipartFile gameFile) throws IOException{
+        return gameDetailsService.addGameFile(gameName,gameFile);
+    }
 
+
+    @GetMapping("/getGameFileByGameName/{gameName}")
+    public Object getGameFileByGameName(@PathVariable String gameName) throws IOException{
+        return gameDetailsService.getGameFile(gameName);
+    }
+    @GetMapping("/getAllGames")
+    public Object getAllGames() throws IOException{
+        return gameDetailsService.getAllGames();
+    }
     @GetMapping("/getGameImageByName/{gameName}")
     public Object getGameImageByName(@PathVariable String gameName) throws IOException {
         return gameDetailsService.getGameImageByName(gameName);
@@ -48,4 +59,9 @@ public class GameController {
     public Object deleteGameDetailsByName(@PathVariable String gameName) throws IOException{
         return gameDetailsService.deleteGameDetailsByName(gameName);
     }
+    @DeleteMapping("/deleteGameFileByGameName/{gameName}")
+    public Object deleteGameFileByGameName(@PathVariable String gameName) throws IOException{
+        return gameDetailsService.deleteGameFile(gameName);
+    }
+
 }

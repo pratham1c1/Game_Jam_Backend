@@ -6,17 +6,19 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.InputStream;
 
-@Document(collection = "VideoFile")
+@Document(collection = "GameFiles")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class VideoFiles {
+public class GameFiles {
     @Id
-    private String id;
+    @Field("_id")
+    private String fileId;
     @NonNull
-    private String title;
-    private InputStream stream;
+    private String fileTitle;
+    private InputStream fileStream;
 }
