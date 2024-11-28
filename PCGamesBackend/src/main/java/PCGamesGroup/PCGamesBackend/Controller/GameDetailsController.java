@@ -15,8 +15,8 @@ public class GameDetailsController {
     private GameDetailsService gameDetailsService;
 
     @PostMapping("/addGame")
-    public Object addGameDetails(@RequestPart("details") GameDetails details, @RequestPart("userName") String userName , @RequestPart("gameImage") MultipartFile gameImage, @RequestPart("gameFirstSs") MultipartFile gameFirstSs, @RequestPart("gameSecondSs") MultipartFile gameSecondSs) throws IOException {
-        return gameDetailsService.addGameDetails(details,userName,gameImage,gameFirstSs,gameSecondSs);
+    public Object addGameDetails(@RequestPart("gameName") String gameName, @RequestPart("userName") String userName,@RequestPart(value = "gameVideoLink" , required = false) String gameVideoLink , @RequestPart(value="gameImage", required = false) MultipartFile gameImage, @RequestPart(value="gameFirstSs", required = false) MultipartFile gameFirstSs, @RequestPart(value="gameSecondSs", required = false) MultipartFile gameSecondSs,@RequestPart(value="gameFile", required = false) MultipartFile gameFile) throws IOException {
+        return gameDetailsService.addGameDetails(gameName,userName,gameVideoLink,gameImage,gameFirstSs,gameSecondSs,gameFile);
     }
     @PostMapping("/addGameFile")
     public Object addGameFile(@RequestPart("gameName") String gameName , @RequestPart("gameFile") MultipartFile gameFile) throws IOException{

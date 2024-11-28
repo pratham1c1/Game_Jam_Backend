@@ -20,6 +20,7 @@ public class GameDetails {
     @Field("_id")
     private String gameId;
     private String userId;
+    private String gameFileId;
     @NonNull
     @Indexed(unique = true)
     private String gameName;
@@ -28,4 +29,5 @@ public class GameDetails {
     private Binary gameSecondScreenshot;
     private String gameVideoLink;
     private Integer gameRating;
+
 }

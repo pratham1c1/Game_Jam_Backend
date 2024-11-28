@@ -33,15 +33,15 @@ public class GameDetailsService {
     @Autowired
     private GameFileService gameFileService;
 
-    public Object addGameDetails(GameDetails details, String userName, MultipartFile file1, MultipartFile file2, MultipartFile file3) throws IOException {
+    public Object addGameDetails(String gameName, String userName,String gameVideoLink, MultipartFile file1, MultipartFile file2, MultipartFile file3,MultipartFile file4) throws IOException {
         // Validate mandatory fields
-        if (details.getGameName() == null || details.getGameName().isEmpty()) {
+        if (gameName == null || gameName.equals("")) {
             return new ErrorMessage("Validation Error", "Game name is mandatory and cannot be null or empty.");
         }
 
         // Check if gameName is unique
-        if (gameDetailsRepo.findByGameName(details.getGameName()) != null) {
-            return new ErrorMessage("Validation Error", "A game with the name '" + details.getGameName() + "' already exists.");
+        if (gameDetailsRepo.findByGameName(gameName) != null) {
+            return new ErrorMessage("Validation Error", "A game with the name '" + gameName + "' already exists.");
         }
 
         // Check if the user exists
@@ -49,8 +49,10 @@ public class GameDetailsService {
         if (user == null) {
             return new ErrorMessage("Validation Error", "User not found with name: " + userName);
         }
-
+        GameDetails details = new GameDetails();
         // Set binary files
+        details.setGameName(gameName);
+        details.setGameVideoLink(gameVideoLink);
         details.setGameImage(file1 != null ? new Binary(BsonBinarySubType.BINARY, file1.getBytes()) : null);
         details.setGameFirstScreenshot(file2 != null ? new Binary(BsonBinarySubType.BINARY, file2.getBytes()) : null);
         details.setGameSecondScreenshot(file3 != null ? new Binary(BsonBinarySubType.BINARY, file3.getBytes()) : null);
@@ -59,8 +61,8 @@ public class GameDetailsService {
         details.setUserId(user.getUserId());
 
         // Save the game details
+        details.setGameFileId(gameFileService.addGameFile(gameName,file4));
         gameDetailsRepo.save(details);
-
         return gameDetailsRepo.findByGameName(details.getGameName());
     }
     public String addGameFile(String gameName, MultipartFile gameFile) throws IOException, IllegalStateException{

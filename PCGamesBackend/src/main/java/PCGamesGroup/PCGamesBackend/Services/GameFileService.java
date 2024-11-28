@@ -30,12 +30,13 @@ public class GameFileService {
     private GridFsOperations gridFsOperations;
 
 
-    public Object addGameFile(String fileName, MultipartFile file) throws IOException{
+    public String addGameFile(String fileName, MultipartFile file) throws IOException{
         DBObject metaData = new BasicDBObject();
         metaData.put("fileTitle", fileName);
         ObjectId objectId = gridFsTemplate.store(
                 file.getInputStream(), fileName , file.getContentType(), metaData);
-        return ResponseEntity.ok("Game File uploaded successfully with ID: " + objectId.toString());
+//        return ResponseEntity.ok("Game File uploaded successfully with ID: " + objectId.toString());
+        return objectId.toString();
     }
 
     public Object getGameFile(String title) throws IllegalStateException, IOException{
