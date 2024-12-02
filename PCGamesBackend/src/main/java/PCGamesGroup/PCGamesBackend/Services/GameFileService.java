@@ -31,12 +31,17 @@ public class GameFileService {
 
 
     public String addGameFile(String fileName, MultipartFile file) throws IOException{
-        DBObject metaData = new BasicDBObject();
-        metaData.put("fileTitle", fileName);
-        ObjectId objectId = gridFsTemplate.store(
-                file.getInputStream(), fileName , file.getContentType(), metaData);
+        if(file != null){
+            DBObject metaData = new BasicDBObject();
+            metaData.put("fileTitle", fileName);
+            ObjectId objectId = gridFsTemplate.store(
+                    file.getInputStream(), fileName , file.getContentType(), metaData);
 //        return ResponseEntity.ok("Game File uploaded successfully with ID: " + objectId.toString());
-        return objectId.toString();
+            return objectId.toString();
+        }
+        else{
+            return null;
+        }
     }
 
     public Object getGameFile(String title) throws IllegalStateException, IOException{
