@@ -59,6 +59,16 @@ public class UserDetailService {
 
         return user;
     }
+    public Object getUserDetailsByUserId(String userId){
+
+        // Check if userName exists
+        UserDetails user = userRepo.findByUserId(userId);
+        if (user == null) {
+            return new ErrorMessage("Validation Error", "User not found with name: " + userId);
+        }
+
+        return user;
+    }
 
     public List<UserDetails> getAllUserDetails(){
         return userRepo.findAll();

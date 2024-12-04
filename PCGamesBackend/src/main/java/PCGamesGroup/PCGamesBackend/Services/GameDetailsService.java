@@ -32,8 +32,7 @@ public class GameDetailsService {
     private UserDetailRepo userDetailRepo;
     @Autowired
     private GameFileService gameFileService;
-
-    public Object addGameDetails(String gameName, String userName,String gameVideoLink, MultipartFile file1, MultipartFile file2, MultipartFile file3,MultipartFile file4) throws IOException {
+    public Object addGameDetails(String gameName, String userName,String gameVideoLink,String gameDescription, String gameInstallInstruction, MultipartFile file1, MultipartFile file2, MultipartFile file3,MultipartFile file4,MultipartFile file5) throws IOException {
         // Validate mandatory fields
         if (gameName == null || gameName.equals("")) {
             return new ErrorMessage("Validation Error", "Game name is mandatory and cannot be null or empty.");
@@ -52,11 +51,13 @@ public class GameDetailsService {
         GameDetails details = new GameDetails();
         // Set binary files
         details.setGameName(gameName);
+        details.setGameDescription(gameDescription);
+        details.setGameInstallInstruction(gameInstallInstruction);
         details.setGameVideoLink(gameVideoLink);
-        details.setGameImage(file1 != null ? new Binary(BsonBinarySubType.BINARY, file1.getBytes()) : null);
+        details.setGameCoverImage(file1 != null ? new Binary(BsonBinarySubType.BINARY, file1.getBytes()) : null);
         details.setGameFirstScreenshot(file2 != null ? new Binary(BsonBinarySubType.BINARY, file2.getBytes()) : null);
         details.setGameSecondScreenshot(file3 != null ? new Binary(BsonBinarySubType.BINARY, file3.getBytes()) : null);
-
+        details.setGameBackgroundImage(file5 != null ? new Binary(BsonBinarySubType.BINARY , file4.getBytes()): null);
         // Set userId
         details.setUserId(user.getUserId());
 
@@ -78,7 +79,7 @@ public class GameDetailsService {
     public Object getAllGames() throws IOException{
         return gameDetailsRepo.findAll();
     }
-    public Object getGameImageByName(String gameName) throws IOException {
+    public Object getGameCoverImageByName(String gameName) throws IOException {
         // Validate that the game exists
         GameDetails gameDetails = gameDetailsRepo.findByGameName(gameName);
         if (gameDetails == null) {
@@ -86,14 +87,14 @@ public class GameDetailsService {
         }
 
         // Validate that the image exists
-        if (gameDetails.getGameImage() == null) {
+        if (gameDetails.getGameCoverImage() == null) {
             return new ErrorMessage("Validation Error", "No game image available for the game: " + gameName);
         }
 
         // Return the image data
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_JPEG);
-        return new ResponseEntity<>(gameDetails.getGameImage().getData(), headers, HttpStatus.OK);
+        return new ResponseEntity<>(gameDetails.getGameCoverImage().getData(), headers, HttpStatus.OK);
     }
     public Object getGameFirstSsByName(String gameName) throws IOException {
         // Validate that the game exists
@@ -156,7 +157,7 @@ public class GameDetailsService {
         // Create the update object
         Update update = new Update()
                 .set("gameName", details.getGameName())
-                .set("gameImage", file1 != null ? new Binary(BsonBinarySubType.BINARY, file1.getBytes()) : existingGame.getGameImage())
+                .set("gameImage", file1 != null ? new Binary(BsonBinarySubType.BINARY, file1.getBytes()) : existingGame.getGameCoverImage())
                 .set("gameFirstScreenshot", file2 != null ? new Binary(BsonBinarySubType.BINARY, file2.getBytes()) : existingGame.getGameFirstScreenshot())
                 .set("gameSecondScreenshot", file3 != null ? new Binary(BsonBinarySubType.BINARY, file3.getBytes()) : existingGame.getGameSecondScreenshot())
                 .set("gameVideoLink", details.getGameVideoLink())

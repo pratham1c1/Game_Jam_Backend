@@ -9,7 +9,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import java.awt.*;
 
 @Document(collection = "gameDetails")
 @Data
@@ -24,9 +23,12 @@ public class GameDetails {
     @NonNull
     @Indexed(unique = true)
     private String gameName;
-    private Binary gameImage;
+    private String gameDescription;
+    private String gameInstallInstruction;
+    private Binary gameCoverImage;
     private Binary gameFirstScreenshot;
     private Binary gameSecondScreenshot;
+    private Binary gameBackgroundImage;
     private String gameVideoLink;
     private Integer gameRating;
 

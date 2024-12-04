@@ -23,7 +23,10 @@ public class UserDetailController {
     public Object getUserByName(@PathVariable String userName){
         return userDetailService.getUserDetailsByName(userName);
     }
-
+    @GetMapping("/getUserByUserId/{userId}")
+    public Object getUserByUserId(@PathVariable String userId){
+        return userDetailService.getUserDetailsByUserId(userId);
+    }
     @GetMapping("/getAllUsers")
     public List<UserDetails> getAllUser(){
         return userDetailService.getAllUserDetails();
