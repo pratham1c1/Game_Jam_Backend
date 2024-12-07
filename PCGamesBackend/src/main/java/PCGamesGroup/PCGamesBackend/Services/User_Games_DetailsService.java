@@ -32,6 +32,14 @@ public class User_Games_DetailsService {
         return gameDetailsRepo.findByUserId(user.getUserId());
     }
 
+    public Object getUserByGameName(String gameName){
+        GameDetails game = gameDetailsRepo.findByGameName(gameName);
+        if(game == null){
+            return (new ErrorMessage("Validation Error" , "Game is not available with the name : "+gameName));
+        }
+        return userDetailRepo.findByUserId(game.getUserId());
+    }
+
     public Object deleteAllGamesByUserName(String userName){
         UserDetails user = userDetailRepo.findByUserName(userName);
 

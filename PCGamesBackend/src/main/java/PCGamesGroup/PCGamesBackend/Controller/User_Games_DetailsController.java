@@ -17,6 +17,10 @@ public class User_Games_DetailsController {
     public Object getAllUserGames(@PathVariable String userName) throws IOException{
         return userGameService.getAllGamesByUserName(userName);
     }
+    @GetMapping("/getGameUserDetails/{gameName}")
+    public Object getUserByGameName(@PathVariable String gameName) throws IOException{
+        return userGameService.getUserByGameName(gameName);
+    }
 
     @DeleteMapping("/deleteAllGames/{userName}")
     public Object deleteAllUserGames(@PathVariable String userName) throws IOException{

@@ -14,6 +14,7 @@ public interface UserDetailRepo extends MongoRepository<UserDetails, String> {
     @Query("{ 'userName' : ?0 }")
     UserDetails findByUserName(String userName);
 
+    @Query("{ '_id' : ?0 }")
     UserDetails findByUserId(String userId);
 
     void deleteByUserName(String userName);
