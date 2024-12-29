@@ -68,6 +68,10 @@ public class GameDetailsController {
     public Object updateGameDetails(@RequestPart("details") GameDetails details, @PathVariable("gameName") String gameName , @RequestPart("gameCoverImage") MultipartFile gameCoverImage, @RequestPart("gameFirstSs") MultipartFile gameFirstSs, @RequestPart("gameSecondSs") MultipartFile gameSecondSs) throws IOException {
         return gameDetailsService.updateGameDetailsByName(details,gameName,gameCoverImage,gameFirstSs,gameSecondSs);
     }
+    @PutMapping("/updatePublishStatue/{gameName}/{publishStatus}")
+    public Object updatePublishStatue(@PathVariable("gameName") String gameName , @PathVariable("publishStatus") boolean publishStatus){
+        return gameDetailsService.updatePublishStatue(gameName,publishStatus);
+    }
 
     @DeleteMapping("/deleteGameDetailsByName/{gameName}")
     public Object deleteGameDetailsByName(@PathVariable String gameName) throws IOException{

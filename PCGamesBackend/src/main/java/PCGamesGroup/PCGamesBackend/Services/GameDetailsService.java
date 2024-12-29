@@ -50,6 +50,7 @@ public class GameDetailsService {
         }
         GameDetails details = new GameDetails();
         // Set binary files
+        details.setUserName(userName);
         details.setGameName(gameName);
         details.setGameDescription(gameDescription);
         details.setGameInstallInstruction(gameInstallInstruction);
@@ -165,8 +166,18 @@ public class GameDetailsService {
 
         // Perform the update
         GameDetails updatedGame = mongoTemplate.findAndModify(query, update, GameDetails.class);
+        return mongoTemplate.findOne(query, GameDetails.class);
+    }
 
-        return updatedGame;
+    public Object updatePublishStatue(String gameName, boolean publishStatus){
+        Query query = new Query(Criteria.where("gameName").is(gameName));
+        GameDetails existingGame = mongoTemplate.findOne(query , GameDetails.class);
+        Update update = new Update()
+                .set("publishStatus" , publishStatus);
+        // not redundant, used to get the updated data
+        GameDetails updatedGame =  mongoTemplate.findAndModify(query, update, GameDetails.class);
+
+        return mongoTemplate.findOne(query, GameDetails.class);
     }
 
     public Object deleteGameDetailsByName(String gameName) {

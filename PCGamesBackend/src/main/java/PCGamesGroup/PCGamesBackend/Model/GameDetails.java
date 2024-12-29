@@ -19,6 +19,7 @@ public class GameDetails {
     @Field("_id")
     private String gameId;
     private String userId;
+    private String userName;
     private String gameFileId;
     @NonNull
     @Indexed(unique = true)
@@ -31,5 +32,6 @@ public class GameDetails {
     private Binary gameBackgroundImage;
     private String gameVideoLink;
     private Integer gameRating;
+    private boolean publishStatus;
 
 }
