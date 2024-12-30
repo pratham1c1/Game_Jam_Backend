@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/games")
@@ -29,8 +30,8 @@ public class GameDetailsController {
      * @throws IOException
      */
     @PostMapping("/addGame")
-    public Object addGameDetails(@RequestPart("gameName") String gameName, @RequestPart(value = "userName" , required = true) String userName,@RequestPart(value = "gameVideoLink" , required = false) String gameVideoLink,@RequestPart(value = "gameDescription", required = false) String gameDescription,@RequestPart(value = "gameInstallInstruc" , required = false) String gameInstallInstruction  , @RequestPart(value="gameCoverImage", required = false) MultipartFile gameCoverImage, @RequestPart(value="gameFirstSs", required = false) MultipartFile gameFirstSs, @RequestPart(value="gameSecondSs", required = false) MultipartFile gameSecondSs,@RequestPart(value="gameFile", required = false) MultipartFile gameFile,@RequestPart(value="gameBackgroundImage", required = false) MultipartFile gameBackgroundImage) throws IOException {
-        return gameDetailsService.addGameDetails(gameName,userName,gameVideoLink,gameDescription,gameInstallInstruction,gameCoverImage,gameFirstSs,gameSecondSs,gameFile,gameBackgroundImage);
+    public Object addGameDetails(@RequestPart("gameName") String gameName, @RequestPart(value = "userName" , required = true) String userName, @RequestPart(value = "gameVideoLink" , required = false) String gameVideoLink, @RequestPart(value = "gameDescription", required = false) String gameDescription, @RequestPart(value = "gameInstallInstruc" , required = false) String gameInstallInstruction, @RequestPart(value = "gameGenre" , required = false) String gameGenre, @RequestPart(value="gameCoverImage", required = false) MultipartFile gameCoverImage, @RequestPart(value="gameFirstSs", required = false) MultipartFile gameFirstSs, @RequestPart(value="gameSecondSs", required = false) MultipartFile gameSecondSs, @RequestPart(value="gameFile", required = false) MultipartFile gameFile, @RequestPart(value="gameBackgroundImage", required = false) MultipartFile gameBackgroundImage) throws IOException {
+        return gameDetailsService.addGameDetails(gameName,userName,gameVideoLink,gameDescription,gameInstallInstruction,gameGenre,gameCoverImage,gameFirstSs,gameSecondSs,gameFile,gameBackgroundImage);
     }
     @PostMapping("/addGameFile")
     public Object addGameFile(@RequestPart("gameName") String gameName , @RequestPart("gameFile") MultipartFile gameFile) throws IOException{
@@ -72,6 +73,19 @@ public class GameDetailsController {
     public Object updatePublishStatue(@PathVariable("gameName") String gameName , @PathVariable("publishStatus") boolean publishStatus){
         return gameDetailsService.updatePublishStatue(gameName,publishStatus);
     }
+    @PutMapping("/updateGameRating/{gameName}")
+    public String updateGameRating(@PathVariable String gameName,@RequestBody GameDetails gameDetails){
+        return gameDetailsService.updateGameRating(gameName,gameDetails.getGameRating());
+    }
+    @PutMapping("/updateGameDownloadCount/{gameName}")
+    public String updateGameDownloadCount(@PathVariable String gameName){
+        return gameDetailsService.updateGameDownloadCount(gameName);
+    }
+    @PutMapping("/updateGameViewCount/{gameName}")
+    public String updateGameViewCount(@PathVariable String gameName){
+        return gameDetailsService.updateGameViewCount(gameName);
+    }
+
 
     @DeleteMapping("/deleteGameDetailsByName/{gameName}")
     public Object deleteGameDetailsByName(@PathVariable String gameName) throws IOException{

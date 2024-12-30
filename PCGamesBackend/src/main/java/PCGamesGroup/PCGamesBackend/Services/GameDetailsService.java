@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Service
 public class GameDetailsService {
@@ -32,7 +33,7 @@ public class GameDetailsService {
     private UserDetailRepo userDetailRepo;
     @Autowired
     private GameFileService gameFileService;
-    public Object addGameDetails(String gameName, String userName,String gameVideoLink,String gameDescription, String gameInstallInstruction, MultipartFile file1, MultipartFile file2, MultipartFile file3,MultipartFile file4,MultipartFile file5) throws IOException {
+    public Object addGameDetails(String gameName, String userName, String gameVideoLink, String gameDescription, String gameInstallInstruction, String gameGenre, MultipartFile file1, MultipartFile file2, MultipartFile file3, MultipartFile file4, MultipartFile file5) throws IOException {
         // Validate mandatory fields
         if (gameName == null || gameName.equals("")) {
             return new ErrorMessage("Validation Error", "Game name is mandatory and cannot be null or empty.");
@@ -55,12 +56,17 @@ public class GameDetailsService {
         details.setGameDescription(gameDescription);
         details.setGameInstallInstruction(gameInstallInstruction);
         details.setGameVideoLink(gameVideoLink);
+        details.setGameGenre(Arrays.asList(gameGenre.split(",")));
         details.setGameCoverImage(file1 != null ? new Binary(BsonBinarySubType.BINARY, file1.getBytes()) : null);
         details.setGameFirstScreenshot(file2 != null ? new Binary(BsonBinarySubType.BINARY, file2.getBytes()) : null);
         details.setGameSecondScreenshot(file3 != null ? new Binary(BsonBinarySubType.BINARY, file3.getBytes()) : null);
         details.setGameBackgroundImage(file5 != null ? new Binary(BsonBinarySubType.BINARY , file4.getBytes()): null);
         // Set userId
         details.setUserId(user.getUserId());
+        details.setGameRating(0);
+        details.setGameRaters(0);
+        details.setGameDownloadCount(0);
+        details.setGameViewCount(0);
 
         // Save the game details
         details.setGameFileId(gameFileService.addGameFile(gameName,file4));
@@ -158,7 +164,7 @@ public class GameDetailsService {
         // Create the update object
         Update update = new Update()
                 .set("gameName", details.getGameName())
-                .set("gameImage", file1 != null ? new Binary(BsonBinarySubType.BINARY, file1.getBytes()) : existingGame.getGameCoverImage())
+                .set("gameCoverImage", file1 != null ? new Binary(BsonBinarySubType.BINARY, file1.getBytes()) : existingGame.getGameCoverImage())
                 .set("gameFirstScreenshot", file2 != null ? new Binary(BsonBinarySubType.BINARY, file2.getBytes()) : existingGame.getGameFirstScreenshot())
                 .set("gameSecondScreenshot", file3 != null ? new Binary(BsonBinarySubType.BINARY, file3.getBytes()) : existingGame.getGameSecondScreenshot())
                 .set("gameVideoLink", details.getGameVideoLink())
@@ -178,6 +184,40 @@ public class GameDetailsService {
         GameDetails updatedGame =  mongoTemplate.findAndModify(query, update, GameDetails.class);
 
         return mongoTemplate.findOne(query, GameDetails.class);
+    }
+    public String updateGameRating(String gameName, Integer gameRating){
+        Query query = new Query(Criteria.where("gameName").is(gameName));
+        GameDetails existingGame = mongoTemplate.findOne(query , GameDetails.class);
+
+        assert existingGame != null;
+        Update update = new Update()
+                .set("gameRating" , existingGame.getGameRating()+gameRating)
+                .set("gameRaters" , existingGame.getGameRaters()+1);
+
+        GameDetails updatedGame = mongoTemplate.findAndModify(query , update , GameDetails.class);
+        return "Game Rating updated successfully";
+    }
+    public String updateGameDownloadCount(String gameName){
+        Query query = new Query(Criteria.where("gameName").is(gameName));
+        GameDetails existingGame = mongoTemplate.findOne(query , GameDetails.class);
+
+        assert existingGame != null;
+        Update update = new Update()
+                .set("gameDownloadCount" , existingGame.getGameDownloadCount()+1);
+
+        GameDetails updatedGame = mongoTemplate.findAndModify(query , update , GameDetails.class);
+        return "Game Download Count updated successfully";
+    }
+    public String updateGameViewCount(String gameName){
+        Query query = new Query(Criteria.where("gameName").is(gameName));
+        GameDetails existingGame = mongoTemplate.findOne(query , GameDetails.class);
+
+        assert existingGame != null;
+        Update update = new Update()
+                .set("gameViewCount" , existingGame.getGameViewCount()+1);
+
+        GameDetails updatedGame = mongoTemplate.findAndModify(query , update , GameDetails.class);
+        return "Game View Count updated successfully";
     }
 
     public Object deleteGameDetailsByName(String gameName) {
