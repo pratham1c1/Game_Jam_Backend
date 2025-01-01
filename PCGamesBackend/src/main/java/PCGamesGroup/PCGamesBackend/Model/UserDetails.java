@@ -11,6 +11,10 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Document(collection = "userDetails")
 @Data
 @NoArgsConstructor
@@ -26,4 +30,7 @@ public class UserDetails {
 
     @NonNull
     private String userEmail;
+    private String deleteThisField;
+
+    private List<String> userLikedGames = new ArrayList<>();
 }

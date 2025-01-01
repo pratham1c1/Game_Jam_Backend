@@ -21,6 +21,19 @@ public class User_Games_DetailsController {
     public Object getUserByGameName(@PathVariable String gameName) throws IOException{
         return userGameService.getUserByGameName(gameName);
     }
+    @GetMapping("/getUserLikedGame/{userName}")
+    public Object getUserLikedGame(@PathVariable String userName) throws IOException{
+        return userGameService.getUserLikedGame(userName);
+    }
+
+    @PutMapping("/addGameToUserLikedGames/{userName}/{gameName}")
+    public Object addGameToUserLikedGames(@PathVariable String userName,@PathVariable String gameName) throws IOException{
+        return userGameService.addGameToUserLikedGames(userName, gameName);
+    }
+    @PutMapping("/removeGameFromUserLikedGames/{userName}/{gameName}")
+    public Object removeGameFromUserLikedGames(@PathVariable String userName,@PathVariable String gameName) throws IOException{
+        return userGameService.removeGameFromUserLikedGames(userName, gameName);
+    }
 
     @DeleteMapping("/deleteAllGames/{userName}")
     public Object deleteAllUserGames(@PathVariable String userName) throws IOException{
