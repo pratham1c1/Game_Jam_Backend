@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/games")
@@ -74,16 +73,24 @@ public class GameDetailsController {
         return gameDetailsService.updatePublishStatue(gameName,publishStatus);
     }
     @PutMapping("/updateGameRating/{gameName}")
-    public String updateGameRating(@PathVariable String gameName,@RequestBody GameDetails gameDetails){
-        return gameDetailsService.updateGameRating(gameName,gameDetails.getGameRating());
+    public Object updateGameRating(@PathVariable String gameName,@RequestBody GameDetails gameDetails){
+        return gameDetailsService.updateGameRating(gameName,gameDetails.getGameRatingCount());
     }
     @PutMapping("/updateGameDownloadCount/{gameName}")
-    public String updateGameDownloadCount(@PathVariable String gameName){
+    public Object updateGameDownloadCount(@PathVariable String gameName){
         return gameDetailsService.updateGameDownloadCount(gameName);
     }
     @PutMapping("/updateGameViewCount/{gameName}")
-    public String updateGameViewCount(@PathVariable String gameName){
+    public Object updateGameViewCount(@PathVariable String gameName){
         return gameDetailsService.updateGameViewCount(gameName);
+    }
+    @PutMapping("/updateGameIncome/{gameName}")
+    public Object updateGameIncome(@PathVariable String gameName){
+        return gameDetailsService.updateGameIncome(gameName);
+    }
+    @PutMapping("/updateGamePrice/{gameName}")
+    public Object updateGamePrice(@PathVariable String gameName ,@RequestBody GameDetails gameDetails ){
+        return gameDetailsService.updateGamePrice(gameName , gameDetails.getGamePrice());
     }
 
 

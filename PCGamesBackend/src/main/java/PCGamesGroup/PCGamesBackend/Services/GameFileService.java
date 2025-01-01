@@ -65,11 +65,15 @@ public class GameFileService {
     }
 
     public Object deleteGameFile(String fileName) throws IOException, IllegalStateException{
-        GridFSFile file = gridFsTemplate.findOne(new Query(Criteria.where("filename").is(fileName)));
-        if(file == null){
+        GridFSFile file = gridFsOperations.findOne(new Query(Criteria.where("filename").is(fileName)));
+
+        if (file != null) {
+            // Delete the file by its ObjectId (ensures chunks are also deleted)
+            gridFsOperations.delete(new Query(Criteria.where("_id").is(file.getObjectId())));
+        } else {
             return (new ErrorMessage("Validation Failed" , "No such file is available with the name : "+fileName));
         }
-        gridFsTemplate.delete(new Query(Criteria.where("filename").is(fileName)));
+
         return (new SuccessMessage("Validation Successful","Successfully deleted the file with file name : " + fileName));
     }
 }

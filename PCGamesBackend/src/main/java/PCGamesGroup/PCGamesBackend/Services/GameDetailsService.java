@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 
 @Service
 public class GameDetailsService {
@@ -33,6 +34,7 @@ public class GameDetailsService {
     private UserDetailRepo userDetailRepo;
     @Autowired
     private GameFileService gameFileService;
+
     public Object addGameDetails(String gameName, String userName, String gameVideoLink, String gameDescription, String gameInstallInstruction, String gameGenre, MultipartFile file1, MultipartFile file2, MultipartFile file3, MultipartFile file4, MultipartFile file5) throws IOException {
         // Validate mandatory fields
         if (gameName == null || gameName.equals("")) {
@@ -63,13 +65,18 @@ public class GameDetailsService {
         details.setGameBackgroundImage(file5 != null ? new Binary(BsonBinarySubType.BINARY , file4.getBytes()): null);
         // Set userId
         details.setUserId(user.getUserId());
-        details.setGameRating(0);
-        details.setGameRaters(0);
+        details.setGameRating(0.0);
+        details.setGameRatingCount(0.0);
+        details.setGameRaters(0.0);
         details.setGameDownloadCount(0);
         details.setGameViewCount(0);
-
-        // Save the game details
-        details.setGameFileId(gameFileService.addGameFile(gameName,file4));
+        details.setGameIncome(0.0);
+        details.setGamePrice(0.0);
+        details.setGameCreateDate((new Date()));
+//         Save the game file details
+        if(file4!=null){
+            details.setGameFileId(gameFileService.addGameFile(gameName,file4));
+        }
         gameDetailsRepo.save(details);
         return gameDetailsRepo.findByGameName(details.getGameName());
     }
@@ -168,7 +175,7 @@ public class GameDetailsService {
                 .set("gameFirstScreenshot", file2 != null ? new Binary(BsonBinarySubType.BINARY, file2.getBytes()) : existingGame.getGameFirstScreenshot())
                 .set("gameSecondScreenshot", file3 != null ? new Binary(BsonBinarySubType.BINARY, file3.getBytes()) : existingGame.getGameSecondScreenshot())
                 .set("gameVideoLink", details.getGameVideoLink())
-                .set("gameRating", details.getGameRating());
+                .set("gameRating", details.getGameRatingCount());
 
         // Perform the update
         GameDetails updatedGame = mongoTemplate.findAndModify(query, update, GameDetails.class);
@@ -177,7 +184,10 @@ public class GameDetailsService {
 
     public Object updatePublishStatue(String gameName, boolean publishStatus){
         Query query = new Query(Criteria.where("gameName").is(gameName));
-        GameDetails existingGame = mongoTemplate.findOne(query , GameDetails.class);
+        GameDetails existingGame = mongoTemplate.findOne(query, GameDetails.class);
+        if (existingGame == null) {
+            return new ErrorMessage("Validation Error", "Game not found with name: " + gameName);
+        }
         Update update = new Update()
                 .set("publishStatus" , publishStatus);
         // not redundant, used to get the updated data
@@ -185,42 +195,81 @@ public class GameDetailsService {
 
         return mongoTemplate.findOne(query, GameDetails.class);
     }
-    public String updateGameRating(String gameName, Integer gameRating){
+    public Object updateGameRating(String gameName, Double newGameRating){
         Query query = new Query(Criteria.where("gameName").is(gameName));
-        GameDetails existingGame = mongoTemplate.findOne(query , GameDetails.class);
+        GameDetails existingGame = mongoTemplate.findOne(query, GameDetails.class);
+        if (existingGame == null) {
+            return new ErrorMessage("Validation Error", "Game not found with name: " + gameName);
+        }
+        double currentRatingSum = existingGame.getGameRatingCount();
+        double currentRaters = existingGame.getGameRaters();
+        double updatedRaters = currentRaters + 1;
+        double updatedRatingSum = currentRatingSum + newGameRating;
 
-        assert existingGame != null;
+
+//         Calculate the new average rating with precision
+        double updatedAverageRating = Math.round((updatedRatingSum / updatedRaters) * 10.0) / 10.0;
+        // Update the game details in MongoDB
         Update update = new Update()
-                .set("gameRating" , existingGame.getGameRating()+gameRating)
-                .set("gameRaters" , existingGame.getGameRaters()+1);
+                .set("gameRating", updatedAverageRating)
+                .set("gameRatingCount", updatedRatingSum)
+                .set("gameRaters", updatedRaters);
+
+
 
         GameDetails updatedGame = mongoTemplate.findAndModify(query , update , GameDetails.class);
         return "Game Rating updated successfully";
     }
-    public String updateGameDownloadCount(String gameName){
+    public Object updateGameDownloadCount(String gameName){
         Query query = new Query(Criteria.where("gameName").is(gameName));
-        GameDetails existingGame = mongoTemplate.findOne(query , GameDetails.class);
-
-        assert existingGame != null;
+        GameDetails existingGame = mongoTemplate.findOne(query, GameDetails.class);
+        if (existingGame == null) {
+            return new ErrorMessage("Validation Error", "Game not found with name: " + gameName);
+        }
         Update update = new Update()
                 .set("gameDownloadCount" , existingGame.getGameDownloadCount()+1);
 
         GameDetails updatedGame = mongoTemplate.findAndModify(query , update , GameDetails.class);
         return "Game Download Count updated successfully";
     }
-    public String updateGameViewCount(String gameName){
+    public Object updateGameViewCount(String gameName){
         Query query = new Query(Criteria.where("gameName").is(gameName));
-        GameDetails existingGame = mongoTemplate.findOne(query , GameDetails.class);
-
-        assert existingGame != null;
+        GameDetails existingGame = mongoTemplate.findOne(query, GameDetails.class);
+        if (existingGame == null) {
+            return new ErrorMessage("Validation Error", "Game not found with name: " + gameName);
+        }
         Update update = new Update()
                 .set("gameViewCount" , existingGame.getGameViewCount()+1);
 
         GameDetails updatedGame = mongoTemplate.findAndModify(query , update , GameDetails.class);
         return "Game View Count updated successfully";
     }
+    public Object updateGameIncome(String gameName){
+        Query query = new Query(Criteria.where("gameName").is(gameName));
+        GameDetails existingGame = mongoTemplate.findOne(query, GameDetails.class);
+        if (existingGame == null) {
+            return new ErrorMessage("Validation Error", "Game not found with name: " + gameName);
+        }
+        Update update = new Update()
+                .set("gameIncome" , existingGame.getGameIncome()+existingGame.getGamePrice());
 
-    public Object deleteGameDetailsByName(String gameName) {
+        GameDetails updatedGame = mongoTemplate.findAndModify(query , update , GameDetails.class);
+        return "Game Income updated successfully";
+    }
+    public Object updateGamePrice(String gameName , Double newGamePrice){
+        Query query = new Query(Criteria.where("gameName").is(gameName));
+        GameDetails existingGame = mongoTemplate.findOne(query, GameDetails.class);
+        if (existingGame == null) {
+            return new ErrorMessage("Validation Error", "Game not found with name: " + gameName);
+        }
+        Update update = new Update()
+                .set("gamePrice" , newGamePrice);
+
+        GameDetails updatedGame = mongoTemplate.findAndModify(query , update , GameDetails.class);
+        return "Game Price updated successfully";
+    }
+
+    public Object deleteGameDetailsByName(String gameName) throws IOException {
         // Validate that the game exists
         GameDetails existingGame = gameDetailsRepo.findByGameName(gameName);
         if (existingGame == null) {
@@ -229,6 +278,7 @@ public class GameDetailsService {
 
         // Delete the game
         gameDetailsRepo.deleteByGameName(gameName);
+        gameFileService.deleteGameFile(gameName);
         return new SuccessMessage("Success", "Game '" + gameName + "' deleted successfully.");
     }
     public Object deleteGameFile(String gameName) throws IOException{

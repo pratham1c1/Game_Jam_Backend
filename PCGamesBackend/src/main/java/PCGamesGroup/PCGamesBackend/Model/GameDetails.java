@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.Date;
 import java.util.List;
 
 @Document(collection = "gameDetails")
@@ -33,10 +34,15 @@ public class GameDetails {
     private Binary gameSecondScreenshot;
     private Binary gameBackgroundImage;
     private String gameVideoLink;
-    private Integer gameRating;
-    private Integer gameRaters;
+    private Double gameRating;
+    private Double gameRatingCount;
+    private Double gameRaters;
     private List<String> gameGenre;
+    private List<String> gamePlatform;
     private Integer gameDownloadCount;
     private Integer gameViewCount;
+    private Double gameIncome;
+    private Double gamePrice;
+    private Date gameCreateDate;
     private boolean publishStatus;
 }
