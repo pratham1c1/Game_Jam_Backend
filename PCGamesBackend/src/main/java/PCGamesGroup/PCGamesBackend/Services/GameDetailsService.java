@@ -72,6 +72,7 @@ public class GameDetailsService {
         details.setGameViewCount(0);
         details.setGameIncome(0.0);
         details.setGamePrice(0.0);
+        details.setGameLikeCount(0);
         details.setGameCreateDate((new Date()));
 //         Save the game file details
         if(file4!=null){

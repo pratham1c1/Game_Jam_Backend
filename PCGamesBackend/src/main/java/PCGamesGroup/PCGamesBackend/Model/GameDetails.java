@@ -43,6 +43,7 @@ public class GameDetails {
     private Integer gameViewCount;
     private Double gameIncome;
     private Double gamePrice;
+    private Integer gameLikeCount;
     private Date gameCreateDate;
     private boolean publishStatus;
 }
