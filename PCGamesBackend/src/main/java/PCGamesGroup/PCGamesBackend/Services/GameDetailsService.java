@@ -35,7 +35,7 @@ public class GameDetailsService {
     @Autowired
     private GameFileService gameFileService;
 
-    public Object addGameDetails(String gameName, String userName, String gameVideoLink, String gameDescription, String gameInstallInstruction, String gameGenre, MultipartFile file1, MultipartFile file2, MultipartFile file3, MultipartFile file4, MultipartFile file5) throws IOException {
+    public Object addGameDetails(String gameName, String userName, String gameVideoLink, String gameDescription, String gameInstallInstruction, String gameGenre, String gamePlatform, MultipartFile file1, MultipartFile file2, MultipartFile file3, MultipartFile file4, MultipartFile file5) throws IOException {
         // Validate mandatory fields
         if (gameName == null || gameName.equals("")) {
             return new ErrorMessage("Validation Error", "Game name is mandatory and cannot be null or empty.");
@@ -59,6 +59,7 @@ public class GameDetailsService {
         details.setGameInstallInstruction(gameInstallInstruction);
         details.setGameVideoLink(gameVideoLink);
         details.setGameGenre(Arrays.asList(gameGenre.split(",")));
+        details.setGamePlatform(Arrays.asList(gamePlatform.split(",")));
         details.setGameCoverImage(file1 != null ? new Binary(BsonBinarySubType.BINARY, file1.getBytes()) : null);
         details.setGameFirstScreenshot(file2 != null ? new Binary(BsonBinarySubType.BINARY, file2.getBytes()) : null);
         details.setGameSecondScreenshot(file3 != null ? new Binary(BsonBinarySubType.BINARY, file3.getBytes()) : null);
